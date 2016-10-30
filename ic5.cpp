@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
+#include <climits>
 
 using namespace std;
 
@@ -98,8 +99,67 @@ void BaseSig::printInfo() {
 	cout << "\nLength: " << length << endl;
 }
 // ------------------------------------------------------------------
+// --------- ProcessedSignal class & methods  ----------------------------
 
-// --------- ExtendSig class and methods ----------------------------
+class ProcessedSignal : public BaseSig {
+	//ProcessedSignal is derived from class BaseSig
+	private:
+		double average;
+		double max_val;
+		double min_val;
+		double *data;
+	public:
+		ProcessedSignal(int fileno);
+		~ProcessedSignal();
+
+		// functions from extendSig
+		double getValue(int pos);
+		int setValue(int pos, double val);
+		double getAverage(void);
+		// new member functions
+		double getMax(void);
+		double getMin(void);
+		
+		// redefine member function. Virtual keyword not needed
+		void printInfo();	// new standard: explicit "override" keyword can be used
+};
+
+double ProcessedSignal::getMax(void) {
+	double tmp_max = (double)INT_MIN;
+	for(int i=0; i<length; i++)
+	{
+		if(data[i] > tmp_max);
+		tmp_max = data[i];
+	}
+	max_val = tmp_max;
+}
+
+double ProcessedSignal::getMin(void) {
+	double tmp_min = (double)INT_MAX;
+	for(int i=0; i<length; i++)
+	{
+		if(data[i] < tmp_min);
+		tmp_min = data[i];
+	}
+	min_val = tmp_min;
+}
+
+void ProcessedSignal::printInfo() {
+	// Just in case
+	getAverage();
+	getMin();
+	getMax();
+	
+	cout << "\nLength: "  << length  << endl;
+	cout << "\nAverage: " << average << endl;
+	cout << "\nMaximum: " << max_val << endl;
+	cout << "\nMinimum: " << min_val << endl;
+}
+
+
+
+
+// --------- extendSig class and methods ----------------------------
 class ExtendSig : public BaseSig{ // ExtendSig is derived from class BaseSig
 //BaseSig is a public base class
 	private: 

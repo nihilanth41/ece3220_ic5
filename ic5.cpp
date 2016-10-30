@@ -1,6 +1,8 @@
 // L14_Ex1_Inheritance.cpp
 #include <iostream>
 #include <cstring>
+#include <cstdlib>
+#include <cstdio>
 
 using namespace std;
 
@@ -13,16 +15,47 @@ class BaseSig{
 	protected:	// accessible by derived classes, not by other users.
 		int length;
 		int *raw_data;
+		void populate(int fileno);
 		
 	public:
 		BaseSig();		// default constructor.
-		BaseSig(int L);	// parametric constructor
+		BaseSig(int fileno);	// parametric constructor
 		~BaseSig();		// destructor
 		int getLength() { return length; };
 		int getRawValue(int pos);
 		static int numObjects;	// static, only one member for the entire hierarchy
 		virtual void printInfo();
 };
+
+void BaseSig::populate(int fileno) {
+	char filename[32];
+	int ret;
+	ret = sprintf(filename, "Raw_data_%02d.txt", fileno);
+	FILE *fp_r = fopen(filename, "r");
+	if(fp_r == NULL)
+	{
+		cout << "Error opening file" << endl;
+	}
+	else
+	{
+		// Ignore max value in the base class? 
+		// Add member for it in derived class?
+		int max_val;
+		fscanf(fp_r, "%d %d", &length, &max_val);
+		// allocate memory for signal
+		raw_data = new int[length];
+		if(raw_data == NULL)
+			cerr << "Error in memory allocation";
+		int i=0;
+		for(i=0; i<length; i++)
+		{
+			// Load data into array 
+			fscanf(fp_r, "%d", raw_data+i);
+		}
+		fclose(fp_r);
+	}
+}
+
 
 int BaseSig::numObjects = 0;	// initialize static data member
 
@@ -31,16 +64,19 @@ BaseSig::BaseSig(){
 	length = 0;
 	raw_data = NULL;
 	numObjects++;
+	// Default constructor uses fileno 1
+	populate(1);
 }
 
 // Base class parametric constructor
 // Note that the data array is not being initialized (we could read from a file)
-BaseSig::BaseSig(int L){
-	length = L;
-	raw_data = new int[L];
-	if(raw_data == NULL)
-		cerr << "Error in memory allocation";
+BaseSig::BaseSig(int fileno){
+	//length = L;
+	//raw_data = new int[L];
+	//if(raw_data == NULL)
+	//	cerr << "Error in memory allocation";
 	numObjects++;
+	populate(fileno);
 }
 
 // Base class destructor
@@ -141,35 +177,36 @@ void ExtendSig::printInfo() {
 
 // Main function. A few examples
 int main(){
-	BaseSig bsig1(5);
-	ExtendSig esig1(10);
-	cout << "# of objects created: " << bsig1.numObjects << endl
-		 << "# of objects created: " << esig1.numObjects << endl;
-	bsig1.printInfo();
-	esig1.printInfo();
-	cout << "--------------------------------------------" << endl;
-	
-	cout << endl << bsig1.getRawValue(3) << endl
-		 << esig1.getRawValue(7) << endl
-		 << esig1.getValue(7) << endl;
-	cout << "--------------------------------------------" << endl;
-	
-	cout << endl << esig1.setValue(7, 2.5) << endl
-		 << esig1.setValue(12, 2.0) << endl;
-		 
-	cout << endl << esig1.getValue(7) << endl;
-	esig1.printInfo();
-	cout << "--------------------------------------------" << endl;
-	
-	BaseSig *ptrB = &bsig1;	// pointer points to object of base class
-	BaseSig &refB = bsig1;  // reference to object of base class
-	ptrB->printInfo();		// which version is used?
-	refB.printInfo();		// which version is used?
-	
-	ptrB = &esig1;	// pointer points to the base part of the object of derived class
-	BaseSig &refB2 = esig1; // reference bound to the base part of esig1
-	ptrB->printInfo();		// which version is used?
-	refB2.printInfo();		// which version is used?
-	cout << "--------------------------------------------" << endl;
+//	BaseSig bsig1(5);
+	BaseSig bsig1(1);
+	//ExtendSig esig1(10);
+	//cout << "# of objects created: " << bsig1.numObjects << endl
+	//	 << "# of objects created: " << esig1.numObjects << endl;
+	//bsig1.printInfo();
+	//esig1.printInfo();
+	//cout << "--------------------------------------------" << endl;
+	//
+	//cout << endl << bsig1.getRawValue(3) << endl
+	//	 << esig1.getRawValue(7) << endl
+	//	 << esig1.getValue(7) << endl;
+	//cout << "--------------------------------------------" << endl;
+	//
+	//cout << endl << esig1.setValue(7, 2.5) << endl
+	//	 << esig1.setValue(12, 2.0) << endl;
+	//	 
+	//cout << endl << esig1.getValue(7) << endl;
+	//esig1.printInfo();
+	//cout << "--------------------------------------------" << endl;
+	//
+	//BaseSig *ptrB = &bsig1;	// pointer points to object of base class
+	//BaseSig &refB = bsig1;  // reference to object of base class
+	//ptrB->printInfo();		// which version is used?
+	//refB.printInfo();		// which version is used?
+	//
+	//ptrB = &esig1;	// pointer points to the base part of the object of derived class
+	//BaseSig &refB2 = esig1; // reference bound to the base part of esig1
+	//ptrB->printInfo();		// which version is used?
+	//refB2.printInfo();		// which version is used?
+	//cout << "--------------------------------------------" << endl;
 	return 0;
 }

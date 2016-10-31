@@ -212,7 +212,6 @@ double ProcessedSignal::getMin(void) {
 }
 
 void ProcessedSignal::printInfo() {
-	// Just in case
 	cout << "\nLength: "  << length  << endl;
 	cout << "Average: " << average << endl;
 	cout << "Maximum: " << max_val << endl;
@@ -243,12 +242,12 @@ class ExtendSig : public BaseSig{ // ExtendSig is derived from class BaseSig
 };
 
 // Derived class constructor. Note how the Base constructor is called.
-ExtendSig::ExtendSig(int L) : BaseSig(L) {
-	data = new double[L];
+ExtendSig::ExtendSig(int fileno) : BaseSig(fileno) {
+	data = new double[length];
 	if(data == NULL)
 		cerr << "Error in memory allocation";
 	else{
-		for(int i = 0; i < L; i++)
+		for(int i = 0; i < length; i++)
 			data[i] = (double)raw_data[i];
 		average = getAverage();
 	}
@@ -298,6 +297,84 @@ void ExtendSig::printInfo() {
 }
 // ------------------------------------------------------------------
 
+class ProcessedSignal_v2 : public ExtendSig {
+	private: 
+		double average;
+		double max_val;
+		double min_val;
+		double *data;
+	public:
+		double getMax(void);
+		double getMin(void);
+		void Normalize(void);
+		ProcessedSignal_v2(int fileno);
+		~ProcessedSignal_v2();
+
+		void printInfo();
+};
+
+
+ProcessedSignal_v2::ProcessedSignal_v2(int fileno) : ExtendSig(fileno) {
+	data = new double[length];
+	if(data == NULL)
+		cerr << "Error in memory allocation";
+	else{
+		for(int i = 0; i < length; i++)
+			data[i] = (double)raw_data[i];
+		average = getAverage();
+		max_val = getMax();
+		min_val = getMin();
+	}
+}
+
+ProcessedSignal_v2::~ProcessedSignal_v2() {
+	//delete raw_data;
+	delete data;
+	cout << "Goodbye, ProcessedSignal_v2." << endl;
+}
+
+void ProcessedSignal_v2::Normalize(void) {
+	// Dont care about wasted cycles;
+	// Just in case
+	max_val = getMax();
+
+	for(int i=0; i<length; i++)
+	{
+		data[i] /= max_val;
+	}
+	average = getAverage();
+	max_val = getMax();
+	min_val = getMin();
+}
+
+void ProcessedSignal_v2::printInfo() {
+	cout << "\nLength: "  << length  << endl;
+	cout << "Average: " << average << endl;
+	cout << "Maximum: " << max_val << endl;
+	cout << "Minimum: " << min_val << "\n" << endl;
+}
+
+double ProcessedSignal_v2::getMax(void) {
+	double tmp_max = (double)INT_MIN;
+	for(int i=0; i<length; i++)
+	{
+		if(data[i] > tmp_max);
+		tmp_max = data[i];
+	}
+	return tmp_max;
+}
+
+double ProcessedSignal_v2::getMin(void) {
+	double tmp_min = (double)INT_MAX;
+	for(int i=0; i<length; i++)
+	{
+		if(data[i] < tmp_min);
+		tmp_min = data[i];
+	}
+	return tmp_min;
+}
+
+// ------------------------------------------------------------------
 // Main function. A few examples
 int main(){
 //	BaseSig bsig1(5);
@@ -317,8 +394,20 @@ int main(){
 	// Print normalized signal
 	psig1.printInfo();
 
-
-
+	cout << "ProcessedSignal_v2 using Raw_data_01.txt:" << endl;
+	ProcessedSignal_v2 psig2(1);
+	// PrintInfo
+	psig2.printInfo();
+	// Make sure getVal(), setVal() still work
+	cout << "Position 5: " << psig2.getValue(4) << endl;
+	cout << "Setting data[4] to 3" << endl;
+	psig2.setValue(4, 3);
+	cout << "Position 5: " << psig2.getValue(4) << endl;
+	// Normalize
+	cout << "\nNormalize:" << endl;
+	psig2.Normalize();
+	// Print normalized signal
+	psig2.printInfo();
 
 	//ExtendSig esig1(10);
 	//cout << "# of objects created: " << bsig1.numObjects << endl

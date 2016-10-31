@@ -1,4 +1,5 @@
-// L14_Ex1_Inheritance.cpp
+// Group members: 
+// Zachary Rump, zrrm74@mail.missouri.edu
 #include <iostream>
 #include <cstring>
 #include <cstdlib>

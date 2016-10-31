@@ -72,10 +72,6 @@ BaseSig::BaseSig(){
 // Base class parametric constructor
 // Note that the data array is not being initialized (we could read from a file)
 BaseSig::BaseSig(int fileno){
-	//length = L;
-	//raw_data = new int[L];
-	//if(raw_data == NULL)
-	//	cerr << "Error in memory allocation";
 	numObjects++;
 	populate(fileno);
 }
@@ -377,8 +373,7 @@ double ProcessedSignal_v2::getMin(void) {
 // ------------------------------------------------------------------
 // Main function. A few examples
 int main(){
-//	BaseSig bsig1(5);
-	//BaseSig bsig1(1);
+	
 	cout << "ProcessedSignal1 using Raw_data_01.txt:" << endl;
 	ProcessedSignal psig1(1);
 	// PrintInfo
@@ -409,34 +404,5 @@ int main(){
 	// Print normalized signal
 	psig2.printInfo();
 
-	//ExtendSig esig1(10);
-	//cout << "# of objects created: " << bsig1.numObjects << endl
-	//	 << "# of objects created: " << esig1.numObjects << endl;
-	//bsig1.printInfo();
-	//esig1.printInfo();
-	//cout << "--------------------------------------------" << endl;
-	//
-	//cout << endl << bsig1.getRawValue(3) << endl
-	//	 << esig1.getRawValue(7) << endl
-	//	 << esig1.getValue(7) << endl;
-	//cout << "--------------------------------------------" << endl;
-	//
-	//cout << endl << esig1.setValue(7, 2.5) << endl
-	//	 << esig1.setValue(12, 2.0) << endl;
-	//	 
-	//cout << endl << esig1.getValue(7) << endl;
-	//esig1.printInfo();
-	//cout << "--------------------------------------------" << endl;
-	//
-	//BaseSig *ptrB = &bsig1;	// pointer points to object of base class
-	//BaseSig &refB = bsig1;  // reference to object of base class
-	//ptrB->printInfo();		// which version is used?
-	//refB.printInfo();		// which version is used?
-	//
-	//ptrB = &esig1;	// pointer points to the base part of the object of derived class
-	//BaseSig &refB2 = esig1; // reference bound to the base part of esig1
-	//ptrB->printInfo();		// which version is used?
-	//refB2.printInfo();		// which version is used?
-	//cout << "--------------------------------------------" << endl;
 	return 0;
 }
